@@ -1,0 +1,18 @@
+packages:
+  openwhisk-sql-query:
+    version: 1.0
+    license: Apache-2.0
+    inputs:
+      bearer: ${IAM_TOKEN}
+    actions:
+      sql-query:
+        function: dist/SqlQuery.js
+        runtime: nodejs:8
+        web-export: true
+    apis:
+      SQL Query:
+        sql:
+          run:
+            sql-query:
+              method: GET
+              response: http

@@ -1,0 +1,28 @@
+{
+  "name": "openwhisk-sql-query",
+  "version": "1.0.0",
+  "description": "OpenWhisk functions for IBM SQL Query",
+  "scripts": {
+    "build": "tsc",
+    "test": "mocha -r ts-node/register test/functionsTest.ts",
+    "bundle": "webpack --config webpack.config.js",
+    "deploy": "npm run build && wskdeploy -m manifest.yaml"
+  },
+  "author": "van_staub@us.ibm.com",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@types/chai": "^4.1.4",
+    "@types/dotenv": "^4.0.3",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.5.5",
+    "chai": "^4.1.2",
+    "dotenv": "^6.0.0",
+    "mocha": "^5.2.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "ts-loader": "^4.4.2",
+    "ts-node": "^7.0.0",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {}
+}
