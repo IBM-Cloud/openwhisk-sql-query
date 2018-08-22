@@ -76,33 +76,70 @@ To install the SQL Query package:
 1. From the CLI, login to IBM Cloud.
 2. Export the following variables to be used with the package.
 
-  ```sh
-  export IAM_TOKEN=`ibmcloud iam oauth-tokens | head -n 1 | awk ' {print $4} '`
-  ```
+    ```sh
+    export IAM_TOKEN=`ibmcloud iam oauth-tokens | head -n 1 | awk ' {print $4} '`
+    ```
 
-  ```sh
-  export INSTANCE_CRN=<your SQL Query instance CRN>
-  ```
+    ```sh
+    export INSTANCE_CRN=<your SQL Query instance CRN>
+    ```
 
 ### Run a SQL Query job
 
-  ```sh
-  export TARGET=cos://<your region>/<your bucket name>
-  ```
-  
-  ```sh
-  ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p resultset_target $TARGET -p instance_crn $INSTANCE_CRN -p statement "SELECT e1.firstname employee, e2.firstname colleague, e1.city FROM cos://us-geo/sql/employees.parquet STORED AS PARQUET e1, cos://us-geo/sql/employees.parquet STORED AS PARQUET e2 WHERE e2.city = e1.city AND e1.employeeid <> e2.employeeid AND e1.firstname = 'Steven' ORDER BY e1.city , e1.firstname" -r
-  ```
+```sh
+export TARGET=cos://<your region>/<your bucket name>
+```
+
+```sh
+ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p resultset_target $TARGET -p instance_crn $INSTANCE_CRN -p statement "SELECT e1.firstname employee, e2.firstname colleague, e1.city FROM cos://us-geo/sql/employees.parquet STORED AS PARQUET e1, cos://us-geo/sql/employees.parquet STORED AS PARQUET e2 WHERE e2.city = e1.city AND e1.employeeid <> e2.employeeid AND e1.firstname = 'Steven' ORDER BY e1.city , e1.firstname" -r
+```
 
 ### Get a specific SQL Query job
 
-  ```sh
-  export JOB_ID=<job id returned from running a job>
-  ```
+```sh
+export JOB_ID=<job id returned from running a job>
+```
 
-  ```sh
-  ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p instance_crn $INSTANCE_CRN -p job_id $JOB_ID -r
-  ```
+```sh
+ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p instance_crn $INSTANCE_CRN -p job_id $JOB_ID -r
+```
 
 ### Combining with the Cloud Object Storage package
 
+You can retrieve the results of a SQL Query job by easily combining it with the [Cloud Object Storage package](https://console.bluemix.net/docs/openwhisk/cloud_object_storage_actions.html#cloud_object_storage_actions). For example, the following declares a wskdeploy sequence that accepts a `job_id` and returns the data from Cloud Object Storage.
+
+```yaml
+sequences:
+    sql-data:
+        actions: openwhisk-sql-query/sql-query,cloud-object-storage/object-read
+```
+
+The above is invoked using the CLI command:
+
+```sh
+ibmcloud fn action invoke <your package>/sql-data -p token $IAM_TOKEN -p job_id 44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8 -r
+```
+
+This concept of sequencing has been built into the openwhisk-sql-query package. It defines a `sql-job-resultset` sequence that can be similarly invoked.
+
+```sh
+ibmcloud fn action invoke openwhisk-sql-query/sql-job-resultset -p token $IAM_TOKEN -p job_id $JOB_ID -r
+```
+
+This produces a JSON object of the form:
+
+```javascript
+{
+    "body": "employee,colleague,city\nSteven,Anne,London\nSteven,Robert,London\nSteven,Michael,London\n",
+    "headers": {
+        "Content-Type": "text/csv"
+    },
+    "statusCode": 200
+}
+```
+
+This makes the sequence also usable as a managed API.
+
+```curl
+curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{"job_id": "44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8","token": "<your IAM token>"}' "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/<your managed api id>/sql/results"
+```

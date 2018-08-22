@@ -3,16 +3,27 @@ packages:
     version: 1.0
     license: Apache-2.0
     inputs:
-      bearer: ${IAM_TOKEN}
+      instance_crn: ${INSTANCE_CRN}
     actions:
       sql-query:
         function: dist/SqlQuery.js
         runtime: nodejs:8
-        web-export: true
+        web: true
+      result-set:
+        function: dist/ResultSet.js
+        runtime: nodejs:8
+    sequences:
+      sql-job-resultset:
+        actions: sql-query,cloud-object-storage/object-read,result-set
+        web: true
     apis:
       SQL Query:
         sql:
           run:
             sql-query:
-              method: GET
+              method: POST
+              response: http
+          results:
+            sql-job-resultset:
+              method: POST
               response: http

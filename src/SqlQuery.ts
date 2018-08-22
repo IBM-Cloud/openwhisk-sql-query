@@ -5,8 +5,8 @@ export class SqlQuery {
 
   private options: any;
 
-  constructor(public instance_crn: string, private token, public endpoint = 'https://sql-api.ng.bluemix.net/v2') {
-    const url = `${endpoint}/sql_jobs?instance_crn=${instance_crn}`
+  constructor(public instance_crn: string, private token: string, public endpoint = 'https://sql-api.ng.bluemix.net/v2') {
+    const url = `${endpoint}/sql_jobs?instance_crn=${instance_crn}`;
 
     // options (mostly) common to all the APIs
     this.options = {
