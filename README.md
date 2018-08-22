@@ -72,7 +72,7 @@ To install the SQL Query package:
     /myOrg_mySpace/open-whisk-sql private
     ```
 
-## Run a SQL Query Job
+## Using the package
 
 1. From the CLI, login to IBM Cloud.
 2. Export the following variables to be used with the package.
@@ -85,12 +85,25 @@ To install the SQL Query package:
     export INSTANCE_CRN=<your SQL Query instance CRN>
     ```
 
+### Run a SQL Query job
+
     ```sh
     export TARGET=cos://<your region>/<your bucket name>
     ```
-
-3. Invoke the `openwhisk-sql-query` package's function.
   
     ```sh
     ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p resultset_target $TARGET -p instance_crn $INSTANCE_CRN -p statement "SELECT e1.firstname employee, e2.firstname colleague, e1.city FROM cos://us-geo/sql/employees.parquet STORED AS PARQUET e1, cos://us-geo/sql/employees.parquet STORED AS PARQUET e2 WHERE e2.city = e1.city AND e1.employeeid <> e2.employeeid AND e1.firstname = 'Steven' ORDER BY e1.city , e1.firstname" -r
     ```
+
+### Get a specific SQL Query job
+
+    ```sh
+    export JOB_ID=<job id returned from running a job>
+    ```
+
+    ```sh
+    ibmcloud fn action invoke openwhisk-sql-query/sql-query -p token $IAM_TOKEN -p instance_crn $INSTANCE_CRN -p job_id $JOB_ID -r
+    ```
+
+### Combining with the Cloud Object Storage package
+

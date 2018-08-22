@@ -1,4 +1,77 @@
 import * as rp from 'request-promise';
+import * as xml2js from 'xml2js';
+
+export class SqlQuery {
+
+  private options: any;
+
+  constructor(public instance_crn: string, private token, public endpoint = 'https://sql-api.ng.bluemix.net/v2') {
+    const url = `${endpoint}/sql_jobs?instance_crn=${instance_crn}`
+
+    // options (mostly) common to all the APIs
+    this.options = {
+      url,
+      headers: {
+        accept: 'application/json'
+      },
+      auth: {
+        bearer: token
+      },
+      json: true,
+    };
+  }
+
+  async getCosKey(endpoint: string, auth: any, bucket: string, prefix: string) {
+    const response = await rp({
+      url: `https://${endpoint}/${bucket}?prefix=${encodeURIComponent(prefix)}`,
+      auth,
+    });
+
+    return new Promise((resolve, reject) => {
+      xml2js.parseString(response, (err, result) => err ? reject(err) : resolve(result));
+    });
+  }
+
+  runSqlJob(statement: string, resultset_target: string) {
+    console.log(`Running SQL Query job ${statement} with resultset ${resultset_target}`);
+
+    if (!statement || !resultset_target) {
+      throw new Error(`Missing args found in SQL Query job`);
+    }
+
+    return rp({
+      ...this.options,
+      ...{
+        method: 'POST',
+        body: {
+          statement,
+          resultset_target
+        }
+      }
+    });
+  }
+
+  async getSqlJob(jobId: string) {
+    const response = await rp({
+      ...this.options,
+      ... {
+        url: `${this.endpoint}/sql_jobs/${jobId}?instance_crn=${this.instance_crn}`
+      }
+    });
+
+    const [endpoint, bucket, ...rest] = response.resultset_location.substring(6).split('/');
+    let key = rest.join('/');
+
+    const cos: any = await this.getCosKey(endpoint, this.options.auth, bucket, `${key}/part`);
+    key = cos.ListBucketResult.Contents[0].Key[0];
+
+    return { ...response, endpoint, bucket, key };
+  }
+
+  async getSqlJobs() {
+    return rp(this.options);
+  }
+}
 
 export interface SqlQueryParams {
   endpoint?: string;
@@ -7,29 +80,6 @@ export interface SqlQueryParams {
   statement?: string;
   resultset_target?: string;
   job_id?: string;
-}
-
-export class WebResponse {
-  headers = { 'Content-Type': 'text/html' };
-
-  constructor(public body: string, public statusCode = 200) {
-
-  }
-}
-
-function runSqlJob(options: any, statement: string, resultset_target: string) {
-  console.log(`Running SQL Query job ${statement} with resultset ${resultset_target}`);
-
-  if (!statement || !resultset_target) {
-    throw new Error(`Missing args found in SQL Query job`);
-  }
-  options.method = 'POST',
-  options.body = {
-    statement,
-    resultset_target
-  };
-
-  return rp(options);
 }
 
 export default function main(params: SqlQueryParams): Promise<any> {
@@ -42,8 +92,6 @@ export default function main(params: SqlQueryParams): Promise<any> {
     job_id
   } = params;
 
-  const url = `${endpoint}/sql_jobs?instance_crn=${instance_crn}`
-
   if (!instance_crn) {
     throw new Error(`SQL Query instance CRN is not defined in arg 'instance_crn'`);
   }
@@ -52,30 +100,19 @@ export default function main(params: SqlQueryParams): Promise<any> {
     throw new Error(`IAM Token not defined in arg 'bearer'`);
   }
 
-  // options common to all APIs
-  const options = {
-    url,
-    headers: {
-      accept: 'application/json'
-    },
-    auth: {
-      bearer: token
-    },
-    json: true,
-  };
+  const sqlQuery = new SqlQuery(instance_crn, token, endpoint);
 
   // user provided a statement - intent is to run SQL Query job
   if (statement) {
-    return runSqlJob(options, statement, resultset_target);
+    return sqlQuery.runSqlJob(statement, resultset_target);
   }
 
   // user provided a job ID - intent is to get a SQL Query job
   if (job_id) {
-    options.url = `${endpoint}/sql_jobs/${job_id}?instance_crn=${instance_crn}`;
-    return rp(options);
+    return sqlQuery.getSqlJob(job_id);
   }
 
   // assume the intent is the list of recent jobs
-  return rp(options)
+  return sqlQuery.getSqlJobs();
 
 }

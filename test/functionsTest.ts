@@ -20,7 +20,8 @@ WHERE e2.city = e1.city
 ORDER BY e1.city , e1.firstname`;
 
 describe('sql-query', function () {
-
+  this.timeout(30000);
+  
   let job_id = '';
 
   it ('runSqlJob', async () => {
@@ -50,17 +51,22 @@ describe('sql-query', function () {
     expect(response.jobs.length).to.be.greaterThan(0);
   });
 
-  it ('job', async () => {
-    const response = await SqlQuery({
-      token,
-      instance_crn,
-      job_id
-    } as SqlQueryParams);
+  it ('job', (done) => {
+    return setTimeout(async () => {
+      const response = await SqlQuery({
+        token,
+        instance_crn,
+        job_id
+      } as SqlQueryParams);
 
-    console.log(JSON.stringify(response));
+      console.log(JSON.stringify(response));
 
-    expect(response).to.not.be.undefined;
-    expect(response.job_id).to.equal(job_id);
+      expect(response).to.not.be.undefined;
+      expect(response.job_id).to.equal(job_id);
+      expect(response.key).to.not.be.undefined;
+
+      done();
+    }, 10000);
   });
 
 });
