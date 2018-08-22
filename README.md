@@ -4,17 +4,16 @@ The SQL Query package provides a set of actions for interacting with SQL Query i
 
 The SQL Query package includes the following actions:
 
-| Entity              | Type    | Parameters                                              | Description                                      |   |
-|---------------------|---------|---------------------------------------------------------|--------------------------------------------------|---|
-| openwhisk-sql-query | package | endpoint, token, instance_crn, resultset_target        | Work with an SQL Query instance.                 |   |
-| sql-query           | action  | endpoint, token, instance_crn, statement, resultset_target | Execute a SQL Query job.                         |   |
-| sql-query           | action  | endpoint, token, instance_crn, job_id                     | Get a specific SQL Query job.                    |   |
-| sql-query           | action  | endpoint, token instance_crn                            | Get a list of recently submitted SQL Query jobs. |   |
+| Entity              | Type    | Parameters                                              | Description                                      |
+|---------------------|---------|---------------------------------------------------------|--------------------------------------------------|
+| openwhisk-sql-query | package | endpoint, token, instance_crn, resultset_target        | Work with an SQL Query instance.                 |
+| sql-query           | action  | endpoint, token, instance_crn, statement, resultset_target | Execute a SQL Query job.                         |
+| sql-query           | action  | endpoint, token, instance_crn, job_id                     | Get a specific SQL Query job.                    |
+| sql-query           | action  | endpoint, token instance_crn                            | Get a list of recently submitted SQL Query jobs. |
 
 ## Creating an SQL Query service instance
 
 ## Before you begin
-{: #prereqs}
 
 Before you can run SQL queries, you need to have one or more Cloud Object Storage buckets to hold the data to be analyzed and to hold the query results.
 Cloud Object Storage offers several plans, including a free "Lite" plan.
