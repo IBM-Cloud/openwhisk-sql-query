@@ -3,12 +3,13 @@
 The SQL Query package provides a set of actions for interacting with SQL Query instances. These actions allow you to submit, retrieve and list SQL Query jobs.
 
 ## OpenWhisk entities
-| Entity              | Type    | Parameters                                              | Description                                      |
-|---------------------|---------|---------------------------------------------------------|--------------------------------------------------|
-| openwhisk-sql-query | package | endpoint, apiKey, instance_crn, resultset_target        | Work with an SQL Query instance.                 |
-| sql-query           | action  | endpoint, apiKey, instance_crn, statement, resultset_target | Execute a SQL Query job.                         |
-| sql-query           | action  | endpoint, apiKey, instance_crn, job_id                     | Get a specific SQL Query job.                    |
-| sql-query           | action  | endpoint, apiKey, instance_crn                            | Get a list of recently submitted SQL Query jobs. |
+| Entity | Type | Parameters | Description |
+|--------|------|------------|-------------|
+| openwhisk-sql-query | package  | endpoint, apiKey, instance_crn, resultset_target | Work with an SQL Query instance. |
+| sql-query           | action   | endpoint, apiKey, instance_crn, statement, resultset_target | Execute a SQL Query job. |
+| sql-query           | action   | endpoint, apiKey, instance_crn, job_id | Get a specific SQL Query job. |
+| sql-query           | action   | endpoint, apiKey, instance_crn | Get a list of recently submitted SQL Query jobs. |
+| sql-job-resultset   | sequence | endpoint, apiKey, job_id | Gets CSV data |
 
 ## Parameters
 | Parameter | Description |
@@ -134,7 +135,7 @@ The above is invoked using the CLI command:
 ibmcloud fn action invoke <your package>/sql-data -p job_id 44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8 -r
 ```
 
-This concept of sequencing has been built into the openwhisk-sql-query package. It defines a `sql-job-resultset` sequence that can be similarly invoked.
+For convenience, a `sql-job-resultset` sequence can be invoked.
 
 ```sh
 ibmcloud fn action invoke openwhisk-sql-query/sql-job-resultset -p job_id $JOB_ID -r
