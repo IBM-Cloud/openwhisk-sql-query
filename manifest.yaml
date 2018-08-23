@@ -7,7 +7,7 @@ packages:
       apiKey: ${API_KEY}
     dependencies:
       openwhisk-sql-query-cos:
-        location: github.com/ibm-functions/package-cloud-object-storage
+        location: github.com/ibm-functions/package-cloud-object-storage/runtimes/nodejs
     actions:
       sql-query:
         function: dist/SqlQuery.js
