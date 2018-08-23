@@ -105,7 +105,6 @@ export default async function main(params: SqlQueryParams): Promise<any> {
 
   // apiKey provided - get IAM token
   if (apiKey) {
-    console.log(`getting token`)
     const response = await rp({
       url: 'https://iam.bluemix.net/identity/token',
       headers: {
@@ -115,8 +114,6 @@ export default async function main(params: SqlQueryParams): Promise<any> {
       body: `apikey=${apiKey}&grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey`,
       json: true
     });
-
-    console.log(response);
 
     token = response.access_token;
   }
