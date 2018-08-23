@@ -72,6 +72,21 @@ To install the SQL Query package:
     /myOrg_mySpace/open-whisk-sql private
     ```
 
+## Binding Object Storage Credentials
+
+The SQL Query package relies on the Cloud Object Storage package. This requires you to bind credentials with Cloud Object Storage as described [here](https://console.bluemix.net/docs/openwhisk/cloud_object_storage_actions.html#cloud_object_storage_actions).
+
+1. From the CLI, create your credentials.
+
+    ```sh
+    ibmcloud resource service-key-create sql-query-cos-credentials Writer --instance-name <your COS instance name> --parameters '{"HMAC":true}'
+    ```
+2. Bind the credentials to the Cloud Object Storage package.
+
+    ```sh
+    ibmcloud fn service bind cloud-object-storage openwhisk-sql-query-cos --instance <your COS instance name>
+    ```
+
 ## Using the package
 
 1. From the CLI, login to IBM Cloud.
