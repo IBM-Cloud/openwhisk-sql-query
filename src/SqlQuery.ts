@@ -6,6 +6,14 @@ export class SqlQuery {
   private options: any;
 
   constructor(public instance_crn: string, private token: string, public endpoint = 'https://sql-api.ng.bluemix.net/v2') {
+    if (!instance_crn) {
+      throw new Error(`SQL Query instance CRN is not defined`);
+    }
+
+    if (!token) {
+      throw new Error(`IAM Token is not defined`);
+    }
+
     const url = `${endpoint}/sql_jobs?instance_crn=${instance_crn}`;
 
     // options (mostly) common to all the APIs
@@ -75,29 +83,42 @@ export class SqlQuery {
 
 export interface SqlQueryParams {
   endpoint?: string;
-  token: string;
+  token?: string;
+  apiKey?: string;
   instance_crn: string;
   statement?: string;
   resultset_target?: string;
   job_id?: string;
 }
 
-export default function main(params: SqlQueryParams): Promise<any> {
+export default async function main(params: SqlQueryParams): Promise<any> {
   const {
     endpoint = 'https://sql-api.ng.bluemix.net/v2',
     instance_crn,
-    token,
+    apiKey,
     statement,
     resultset_target,
     job_id
   } = params;
+  
+  let { token } = params;
 
-  if (!instance_crn) {
-    throw new Error(`SQL Query instance CRN is not defined in arg 'instance_crn'`);
-  }
+  // apiKey provided - get IAM token
+  if (apiKey) {
+    console.log(`getting token`)
+    const response = await rp({
+      url: 'https://iam.bluemix.net/identity/token',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      method: "POST",
+      body: `apikey=${apiKey}&grant_type=urn%3Aibm%3Aparams%3Aoauth%3Agrant-type%3Aapikey`,
+      json: true
+    });
 
-  if (!token) {
-    throw new Error(`IAM Token not defined in arg 'bearer'`);
+    console.log(response);
+
+    token = response.access_token;
   }
 
   const sqlQuery = new SqlQuery(instance_crn, token, endpoint);

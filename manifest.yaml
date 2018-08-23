@@ -4,6 +4,7 @@ packages:
     license: Apache-2.0
     inputs:
       instance_crn: ${INSTANCE_CRN}
+      apiKey: ${API_KEY}
     actions:
       sql-query:
         function: dist/SqlQuery.js
