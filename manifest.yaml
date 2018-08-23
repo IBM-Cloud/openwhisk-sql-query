@@ -5,6 +5,9 @@ packages:
     inputs:
       instance_crn: ${INSTANCE_CRN}
       apiKey: ${API_KEY}
+    dependencies:
+      openwhisk-sql-query-cos:
+          location: github.com/ibm-functions/package-cloud-object-storage
     actions:
       sql-query:
         function: dist/SqlQuery.js
@@ -15,7 +18,7 @@ packages:
         runtime: nodejs:8
     sequences:
       sql-job-resultset:
-        actions: sql-query,cloud-object-storage/object-read,result-set
+        actions: sql-query,openwhisk-sql-query-cos/object-read,result-set
         web: true
     apis:
       SQL Query:
