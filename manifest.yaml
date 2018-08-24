@@ -5,6 +5,9 @@ packages:
     inputs:
       instance_crn: ${INSTANCE_CRN}
       apiKey: ${API_KEY}
+    dependencies:
+      cloud-object-storage:
+        location: github.com/ibm-functions/package-cloud-object-storage/runtimes/nodejs
     actions:
       sql-query:
         function: dist/SqlQuery.js

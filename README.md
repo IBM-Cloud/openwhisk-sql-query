@@ -85,7 +85,7 @@ The SQL Query package relies on the Cloud Object Storage package. This requires 
 2. Bind the credentials to the Cloud Object Storage package.
 
     ```sh
-    ibmcloud fn service bind cloud-object-storage openwhisk-sql-query-cos --instance <your COS instance name>
+    ibmcloud fn service bind cloud-object-storage cloud-object-storage --instance <your COS instance name>
     ```
 
 ## Using the package
