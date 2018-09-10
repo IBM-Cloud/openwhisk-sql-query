@@ -1,6 +1,6 @@
 # SQL Query Package
 
-The SQL Query package provides a set of actions for interacting with SQL Query instances. These actions allow you to submit, retrieve and list SQL Query jobs.
+The OpenWhisk SQL Query package provides a set of actions for interacting with SQL Query instances. These actions allow you to submit, retrieve and list SQL Query jobs.
 
 ## OpenWhisk entities
 | Entity | Type | Parameters | Description |
@@ -31,8 +31,8 @@ Before you can run SQL Query jobs, you need to have a service instance of SQL Qu
 
 Obtain the Instance CRN of your SQL Query service instance to be used with the package.
 
-1. In the [Dashboard](https://console.bluemix.net/dashboard), access you SQL Query instance.
-2. Click the **Instance CRN** button to copy it to the clipboard, and set an environment variable.
+2. In the [Dashboard](https://console.bluemix.net/dashboard), access you SQL Query instance.
+3. Click the **Instance CRN** button to copy it to the clipboard, and set an environment variable.
 
 ```sh
 export INSTANCE_CRN=<your instance crn>
@@ -40,12 +40,12 @@ export INSTANCE_CRN=<your instance crn>
 
 SQL Query requires an IAM token to be used when making API calls. Since IAM tokens expire after 60 minutes, it's advised to create an API Key. The API key will be referenced during package deployment.
 
-1. Log in to IBM Cloud and select [Manage > Security > Platform API Keys](https://console.bluemix.net/iam/#/apikeys).
-2. Create an API key for your own personal identity, copy the key value, and save it in a secure place. After you leave the page, you will no longer be able to access this value.
+3. Log in to IBM Cloud and select [Manage > Security > Platform API Keys](https://console.bluemix.net/iam/#/apikeys).
+4. Create an API key for your own personal identity, copy the key value, and save it in a secure place. After you leave the page, you will no longer be able to access this value.
 
 ## Installing the SQL Query package
 
-Use the Cloud Functions CLI to install the SQL Query package into your namespace.
+Use the Cloud Functions CLI plugin to install the SQL Query package into your namespace.
 
 1. [Install the Cloud Functions plugin for the IBM Cloud CLI](bluemix_cli.html#cloudfunctions_cli).
 2. Install the `wskdeploy` command. See the [Apache OpenWhisk documentation](https://github.com/apache/incubator-openwhisk-wskdeploy#building-the-project).
@@ -135,7 +135,7 @@ The above is invoked using the CLI command:
 ibmcloud fn action invoke <your package>/sql-data -p job_id 44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8 -r
 ```
 
-For convenience, a `sql-job-resultset` sequence can be invoked.
+For convenience, a `sql-job-resultset` sequence is available in the SQL Query package.
 
 ```sh
 ibmcloud fn action invoke openwhisk-sql-query/sql-job-resultset -p job_id $JOB_ID -r
@@ -153,8 +153,12 @@ This produces a JSON object of the form:
 }
 ```
 
-This makes the sequence also usable as a managed API.
+## REST APIs
+
+The `sql-query` and `sql-job-resultset` sequences are also exposed as APIs. To limit usage to authorized applications, use the `Require applications to authenticate via API key` definition option seen on the [SQL Query API management page](https://console.bluemix.net/openwhisk/apimanagement).
+
+An example usage is below.
 
 ```curl
-curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{"job_id": "44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8","token": "<your IAM token>"}' "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/<your managed api id>/sql/results"
+curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{"job_id": "44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8"}' "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/<your managed api id>/sql/results"
 ```
