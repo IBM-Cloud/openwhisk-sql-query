@@ -54,7 +54,7 @@ To install the SQL Query package:
 
 1. Clone the SQL Query package repo.
     ```sh
-    git clone https://github.com/van-ibm/openwhisk-sql-query.git
+    git clone https://github.com/IBM-Cloud/openwhisk-sql-query.git
     ```
 
 2. Deploy the package.
