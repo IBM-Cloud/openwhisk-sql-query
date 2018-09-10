@@ -21,8 +21,6 @@ The OpenWhisk SQL Query package provides a set of actions for interacting with S
 | statement | SQL to execute |
 | job_id  | SQL Query job to retrieve |
 
-## Creating an SQL Query service instance
-
 ## Before you begin
 
 Before you can run SQL Query jobs, you need to have a service instance of SQL Query and one or more Cloud Object Storage buckets to hold the data to be analyzed and also hold the query results.
@@ -62,7 +60,7 @@ To install the SQL Query package:
     wskdeploy -m manifest.yaml -p apiKey <your API key>
     ```
 
-3. Verify that the `open-whisk-sql` package is added to your package list.
+3. Verify that the `openwhisk-sql-query` package is added to your package list.
     ```sh
     ibmcloud fn package list
     ```
@@ -70,7 +68,7 @@ To install the SQL Query package:
     Output:
     ```sh
     packages
-    /myOrg_mySpace/open-whisk-sql private
+    /myOrg_mySpace/openwhisk-sql-query private
     ```
 
 ## Binding Object Storage Credentials
