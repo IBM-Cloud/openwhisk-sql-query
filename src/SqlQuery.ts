@@ -20,7 +20,8 @@ export class SqlQuery {
     this.options = {
       url,
       headers: {
-        accept: 'application/json'
+        accept: 'application/json',
+        'User-Agent': 'openwhisk-sql-query'
       },
       auth: {
         bearer: token
