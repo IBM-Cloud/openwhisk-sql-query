@@ -155,8 +155,8 @@ This produces a JSON object of the form:
 
 The `sql-query` and `sql-job-resultset` sequences are also exposed as APIs. To limit usage to authorized applications, use the `Require applications to authenticate via API key` definition option seen on the [SQL Query API management page](https://console.bluemix.net/openwhisk/apimanagement).
 
-An example usage is below.
+For example, to obtain CSV results simply use a browser URL. The public accessibility of CSV data can now be used with additional services such as Cognos Dashboard Embedded.
 
 ```curl
-curl -X POST -H "Content-Type: application/json" -H "Cache-Control: no-cache" -d '{"job_id": "44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8"}' "https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/<your managed api id>/sql/results"
+https://service.us.apiconnect.ibmcloud.com/gws/apigateway/api/<your managed api id>/sql/results?job_id=28c8cf5e-3510-419a-8bc2-dd53b4f595ab
 ```
