@@ -57,7 +57,7 @@ To install the SQL Query package:
 
 2. Deploy the package.
     ```sh
-    wskdeploy -m manifest.yaml -p apiKey <your API key>
+    wskdeploy --param instance_crn $INSTANCE_CRN --param apiKey <your API key>
     ```
 
 3. Verify that the `openwhisk-sql-query` package is added to your package list.
