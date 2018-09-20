@@ -43,7 +43,7 @@ SQL Query requires an IAM token to be used when making API calls. Since IAM toke
     - UI: Log in to IBM Cloud and select [Manage > Security > Platform API Keys](https://console.bluemix.net/iam/#/apikeys). After you leave the page, you will no longer be able to access this value.
     - Command Line:
         ```sh
-        export API_KEY=`ibmcloud iam api-key-create usage-tutorial-key -d 'apiKey created for http://github.com/IBM-Cloud/cloud-usage-samples' | grep 'API Key' | awk ' {print $3} '`
+        export API_KEY=`ibmcloud iam api-key-create sql-query-key -d 'apiKey created for http://github.com/IBM-Cloud/openwhisk-sql-query' | grep 'API Key' | awk ' {print $3} '`
         ```
 
 ## Installing the SQL Query package
