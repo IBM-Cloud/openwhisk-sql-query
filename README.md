@@ -36,10 +36,15 @@ Obtain the Instance CRN of your SQL Query service instance to be used with the p
 export INSTANCE_CRN=<your instance crn>
 ```
 
-SQL Query requires an IAM token to be used when making API calls. Since IAM tokens expire after 60 minutes, it's advised to create an API Key. The API key will be referenced during package deployment.
+SQL Query requires an IAM token to be used when making API calls. Since IAM tokens expire after 60 minutes, it's advised to create an API Key that will be used to generate an IAM token when the functions run. The API key will be saved during package deployment.
 
-3. Log in to IBM Cloud and select [Manage > Security > Platform API Keys](https://console.bluemix.net/iam/#/apikeys).
-4. Create an API key for your own personal identity, copy the key value, and save it in a secure place. After you leave the page, you will no longer be able to access this value.
+4. Create an API key for your own personal identity, copy the key value, and save it in a secure place. Do this from either the UI or command line:
+
+    - UI: Log in to IBM Cloud and select [Manage > Security > Platform API Keys](https://console.bluemix.net/iam/#/apikeys). After you leave the page, you will no longer be able to access this value.
+    - Command Line:
+        ```sh
+        export API_KEY=`ibmcloud iam api-key-create usage-tutorial-key -d 'apiKey created for http://github.com/IBM-Cloud/cloud-usage-samples' | grep 'API Key' | awk ' {print $3} '`
+        ```
 
 ## Installing the SQL Query package
 
@@ -119,27 +124,13 @@ The SQL Query package relies on the Cloud Object Storage package. This requires 
 
 ### Combining with Cloud Object Storage
 
-You can retrieve the results of a SQL Query job by easily combining it with the [Cloud Object Storage package](https://console.bluemix.net/docs/openwhisk/cloud_object_storage_actions.html#cloud_object_storage_actions). For example, the following declares a wskdeploy sequence that accepts a `job_id` and returns the data from Cloud Object Storage.
-
-```yaml
-sequences:
-    sql-data:
-        actions: openwhisk-sql-query/sql-query,cloud-object-storage/object-read
-```
-
-The above is invoked using the CLI command:
-
-```sh
-ibmcloud fn action invoke <your package>/sql-data -p job_id 44b4a7fb-3d91-4152-aa2d-d06dbaa86eb8 -r
-```
-
-For convenience, a `sql-job-resultset` sequence is available in the SQL Query package.
+You can retrieve the results of a SQL Query job by easily combining it with the [Cloud Object Storage package](https://console.bluemix.net/docs/openwhisk/cloud_object_storage_actions.html#cloud_object_storage_actions). For convenience, a `sql-job-resultset` sequence is available in the SQL Query package.
 
 ```sh
 ibmcloud fn action invoke openwhisk-sql-query/sql-job-resultset -p job_id $JOB_ID -r
 ```
 
-This produces a JSON object of the form:
+This produces a JSON object, which contains CSV data in the `body`:
 
 ```javascript
 {
