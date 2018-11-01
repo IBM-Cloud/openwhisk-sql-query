@@ -2,6 +2,8 @@
 
 The OpenWhisk SQL Query package provides a set of actions for interacting with SQL Query instances. These actions allow you to submit, retrieve and list SQL Query jobs.
 
+[![](youtube.png)](https://www.youtube.com/watch?v=KxqNE0ehH1E&feature=youtu.be&t=9)
+
 ## OpenWhisk entities
 | Entity | Type | Parameters | Description |
 |--------|------|------------|-------------|
